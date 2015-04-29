@@ -6,39 +6,6 @@ var main = function () {
 
     /*========================= CAPTURE MOUSE EVENTS ========================= */
 
-//    var drag = false;
-//
-//
-//    var old_x, old_y;
-//
-//    var mouseDown = function (e) {
-//        drag = true;
-//        old_x = e.pageX, old_y = e.pageY;
-//        e.preventDefault();
-//        return false;
-//    };
-//
-//    var mouseUp = function (e) {
-//        drag = false;
-//    };
-//
-//    var mouseMove = function (e) {
-//        if (!drag)
-//            return false;
-//        var dX = e.pageX - old_x,
-//                dY = e.pageY - old_y;
-//        THETA += dX * 2 * Math.PI / canvas.width;
-//        PHI += dY * 2 * Math.PI / canvas.height;
-//        old_x = e.pageX, old_y = e.pageY;
-//        e.preventDefault();
-//    };
-//
-//    canvas.addEventListener("mousedown", mouseDown, false);
-//    canvas.addEventListener("mouseup", mouseUp, false);
-//    canvas.addEventListener("mouseout", mouseUp, false);
-//    canvas.addEventListener("mousemove", mouseMove, false);
-//
-
     var pulsado = false;
 
     var onClick = function (e) {
@@ -61,21 +28,22 @@ var main = function () {
 
     var shader_vertex_source = "\n\
 attribute vec3 position;\n\
+attribute vec2 uv;\n\
 uniform mat4 Pmatrix;\n\
 uniform mat4 Vmatrix;\n\
 uniform mat4 Mmatrix;\n\
-attribute vec3 color; //the color of the point\n\
-varying vec3 vColor;\n\
+varying vec2 vUV;\n\
 void main(void) { //pre-built function\n\
 gl_Position = Pmatrix*Vmatrix*Mmatrix*vec4(position, 1.);\n\
-vColor=position;\n\
+vUV=uv;\n\
 }";
 
     var shader_fragment_source = "\n\
 precision mediump float;\n\
-varying vec3 vColor;\n\
+uniform sampler2D sampler;\n\
+varying vec2 vUV;\n\
 void main(void) {\n\
-gl_FragColor = vec4(vColor, 1.);\n\
+gl_FragColor = texture2D(sampler, vUV);\n\
 }";
 
     var get_shader = function (source, type, typeString) {
@@ -102,71 +70,16 @@ gl_FragColor = vec4(vColor, 1.);\n\
     var _Vmatrix = GL.getUniformLocation(SHADER_PROGRAM, "Vmatrix");
     var _Mmatrix = GL.getUniformLocation(SHADER_PROGRAM, "Mmatrix");
 
-//    var _color = GL.getAttribLocation(SHADER_PROGRAM, "color");
-//    var _position = GL.getAttribLocation(SHADER_PROGRAM, "position");
-//
-//    GL.enableVertexAttribArray(_color);
-//    GL.enableVertexAttribArray(_position);
+    var _sampler = GL.getUniformLocation(SHADER_PROGRAM, "sampler");
+    var _position = GL.getAttribLocation(SHADER_PROGRAM, "position");
+    var _uv = GL.getAttribLocation(SHADER_PROGRAM, "uv");
+
+    GL.enableVertexAttribArray(_position);
+    GL.enableVertexAttribArray(_uv);
 
     GL.useProgram(SHADER_PROGRAM);
+    GL.uniform1i(_sampler, 0);
 
-    /*========================= THE CUBE ========================= */
-    //POINTS :
-//    var cube_vertex = [
-//        -1, -1, -1, 1, 1, 0,
-//        1, -1, -1, 1, 1, 0,
-//        1, 1, -1, 1, 1, 0,
-//        -1, 1, -1, 1, 1, 0,
-//        -1, -1, 1, 0, 0, 1,
-//        1, -1, 1, 0, 0, 1,
-//        1, 1, 1, 0, 0, 1,
-//        -1, 1, 1, 0, 0, 1,
-//        -1, -1, -1, 0, 1, 1,
-//        -1, 1, -1, 0, 1, 1,
-//        -1, 1, 1, 0, 1, 1,
-//        -1, -1, 1, 0, 1, 1,
-//        1, -1, -1, 1, 0, 0,
-//        1, 1, -1, 1, 0, 0,
-//        1, 1, 1, 1, 0, 0,
-//        1, -1, 1, 1, 0, 0,
-//        -1, -1, -1, 1, 0, 1,
-//        -1, -1, 1, 1, 0, 1,
-//        1, -1, 1, 1, 0, 1,
-//        1, -1, -1, 1, 0, 1,
-//        -1, 1, -1, 0, 1, 0,
-//        -1, 1, 1, 0, 1, 0,
-//        1, 1, 1, 0, 1, 0,
-//        1, 1, -1, 0, 1, 0
-//
-//    ];
-//
-//    var CUBE_VERTEX = GL.createBuffer();
-//    GL.bindBuffer(GL.ARRAY_BUFFER, CUBE_VERTEX);
-//    GL.bufferData(GL.ARRAY_BUFFER,
-//            new Float32Array(cube_vertex),
-//            GL.STATIC_DRAW);
-
-    //FACES :
-//    var cube_faces = [
-//        0, 1, 2,
-//        0, 2, 3,
-//        4, 5, 6,
-//        4, 6, 7,
-//        8, 9, 10,
-//        8, 10, 11,
-//        12, 13, 14,
-//        12, 14, 15,
-//        16, 17, 18,
-//        16, 18, 19,
-//        20, 21, 22,
-//        20, 22, 23
-//
-//    ];
-//    var CUBE_FACES = GL.createBuffer();
-//    GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, CUBE_FACES);
-//    GL.bufferData(GL.ELEMENT_ARRAY_BUFFER,
-//            new Uint16Array(cube_faces),
-//            GL.STATIC_DRAW);
 
     /*========================= MATRIX ========================= */
 
@@ -175,9 +88,11 @@ gl_FragColor = vec4(vColor, 1.);\n\
     var VIEWMATRIX = LIBS.get_I4();
 
     LIBS.translateZ(VIEWMATRIX, -5);
-    var THETA = 0, PHI = 0;
 
-    var tierra = new Esfera(1, 50, GL, SHADER_PROGRAM);
+
+    var tierra = new Esfera(1, 50, GL, "luna.gif");
+    tierra.position = _position;
+    tierra.uv = _uv;
     tierra.crearEsfera();
 
     /*========================= DRAWING ========================= */
