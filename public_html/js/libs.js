@@ -90,5 +90,22 @@ var LIBS = {
         m[12] += x;
         m[13] += y;
         m[14] += z;
+    },
+    copy: function (origen, destino) {
+        for (var i = 0; i < 16; i++) {
+            destino[i] = origen[i];
+        }
+    },
+    mult: function (m1, m2) {
+        var m_res = this.get_I4();
+        for (var i = 0; i < 4; i++) {
+            for (var j = 0; j < 4; j++) {
+                m_res[ i * 4 + j ] = 0;
+                for (var k = 0; k < 4; k++) {
+                    m_res[ i * 4 + j ] += (m1[ i * 4 + k ] * m2[ k * 4 + j ]);
+                }
+            }
+        }
+        return m_res;
     }
 };

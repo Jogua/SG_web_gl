@@ -22,15 +22,19 @@ var main = function () {
     var VIEWMATRIX = LIBS.get_I4();
     var MOVEMATRIX;
 
-    LIBS.translateZ(VIEWMATRIX, -6);
+    LIBS.translateZ(VIEWMATRIX, -15);
 
     /*========================= CREACIÓN ASTROS ========================= */
 
     //new Planeta/Satelite (radio, GL, distancia, grados de rotacion, grados de traslacion, nombre textura)
-    var tierra = new Planeta(1, GL, 0, 1, 0, "textures/tierra.jpg");
-    var luna = new Satelite(0.5, GL, 0.5, 1, 2, "textures/luna.jpg");
-    luna.setPickableRot(true);
+    var tierra = new Planeta(2, GL, 0, 1, 0, "textures/tierra.jpg");
+    var luna = new Satelite(0.5, GL, 1, 0, 1, "textures/luna.jpg");
+//    tierra.setPickableRot(true);
+//    tierra.setPickableTras(true);
+//    luna.setPickableRot(true);
+    luna.setPickableTras(true);
     tierra.addSatelite(luna);
+    
 
     /*========================= DRAWING ========================= */
     GL.enable(GL.DEPTH_TEST);
@@ -46,8 +50,8 @@ var main = function () {
         GL.uniformMatrix4fv(_Pmatrix, false, PROJMATRIX);
         GL.uniformMatrix4fv(_Vmatrix, false, VIEWMATRIX);
         MOVEMATRIX = LIBS.get_I4();
-
-        tierra.dibujar(_position, _uv);
+        
+        tierra.dibujar(_position, _uv, MOVEMATRIX);
         
         GL.flush();
 

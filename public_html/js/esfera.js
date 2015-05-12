@@ -9,7 +9,7 @@ function Esfera(radio, resolucion, GL) {
     var bufferCaras = GL.createBuffer();
 
     var imagen;
-    
+
     this.crearEsfera = function () {
         var i, j;
         var incremento = Math.PI / resolucion;
