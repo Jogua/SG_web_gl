@@ -51,7 +51,6 @@ var main = function () {
         MOVEMATRIX = LIBS.get_I4();
         
         tierra.dibujar(_position, _uv, MOVEMATRIX);
-//        luna.dibujar(_position,_uv, MOVEMATRIX);
         
         GL.flush();
 
