@@ -27,14 +27,13 @@ var main = function () {
     /*========================= CREACIÓN ASTROS ========================= */
 
     //new Planeta/Satelite (radio, GL, distancia, grados de rotacion, grados de traslacion, nombre textura)
-    var tierra = new Planeta(2, GL, 0, 1, 0, "textures/tierra.jpg");
-    var luna = new Satelite(0.5, GL, 1, 0, 1, "textures/luna.jpg");
+    var tierra = new Planeta(1, GL, 0, 1, 0, "textures/tierra.jpg");
+    var luna = new Satelite(0.5, GL, 1, 0, 2, "textures/luna.jpg");
 //    tierra.setPickableRot(true);
 //    tierra.setPickableTras(true);
 //    luna.setPickableRot(true);
     luna.setPickableTras(true);
     tierra.addSatelite(luna);
-    
 
     /*========================= DRAWING ========================= */
     GL.enable(GL.DEPTH_TEST);
@@ -52,6 +51,7 @@ var main = function () {
         MOVEMATRIX = LIBS.get_I4();
         
         tierra.dibujar(_position, _uv, MOVEMATRIX);
+//        luna.dibujar(_position,_uv, MOVEMATRIX);
         
         GL.flush();
 
