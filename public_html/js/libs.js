@@ -51,20 +51,6 @@ var LIBS = {
         m[6] = c * m[6] - s * mv4;
         m[10] = c * m[10] - s * mv8;
     },
-    rotateY2: function (m, angle) {
-        var c = Math.cos(angle);
-        var s = Math.sin(angle);
-        var mv0 = m[0], mv4 = m[4], mv8 = m[8], mv12 = m[12];
-        m[0] = c * m[0] + s * m[2];
-        m[4] = c * m[4] + s * m[6];
-        m[8] = c * m[8] + s * m[10];
-        m[12] = c * m[12] + s * m[14];
-
-        m[2] = c * m[2] - s * mv0;
-        m[6] = c * m[6] - s * mv4;
-        m[10] = c * m[10] - s * mv8;
-        m[14] = c * m[14] - s * mv12;
-    },
     rotateZ: function (m, angle) {
         var c = Math.cos(angle);
         var s = Math.sin(angle);
@@ -90,11 +76,6 @@ var LIBS = {
         m[12] += x;
         m[13] += y;
         m[14] += z;
-    },
-    copy: function (origen, destino) {
-        for (var i = 0; i < 16; i++) {
-            destino[i] = origen[i];
-        }
     },
     mult: function (m1, m2) {
         var m_res = this.get_I4();

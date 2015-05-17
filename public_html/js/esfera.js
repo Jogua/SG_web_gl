@@ -8,6 +8,8 @@ function Esfera(radio, resolucion, GL) {
     var bufferVertices = GL.createBuffer();
     var bufferCaras = GL.createBuffer();
 
+    var material = new Material(GL);
+
     var imagen;
 
     this.crearEsfera = function () {
@@ -22,18 +24,22 @@ function Esfera(radio, resolucion, GL) {
                 var sinRadJ = Math.sin(radJ);
                 var cosRadJ = Math.cos(radJ);
 
-                var x = radio * sinRadI * sinRadJ;
-                var y = radio * cosRadI;
-                var z = radio * sinRadI * cosRadJ;
+                var x = sinRadI * sinRadJ;
+                var y = cosRadI;
+                var z = sinRadI * cosRadJ;
                 var u = (j / resolucion);
                 var v = 1 - (i / resolucion);
+
+                vertices.push(x * radio);
+                vertices.push(y * radio);
+                vertices.push(z * radio);
+
+                vertices.push(u);
+                vertices.push(v);
 
                 vertices.push(x);
                 vertices.push(y);
                 vertices.push(z);
-
-                vertices.push(u);
-                vertices.push(v);
             }
         }
 
@@ -58,6 +64,8 @@ function Esfera(radio, resolucion, GL) {
         GL.bufferData(GL.ELEMENT_ARRAY_BUFFER, new Uint16Array(caras), GL.STATIC_DRAW);
 
     };
+    
+    this.crearEsfera();
 
     this.cargarTextura = function (nombreTextura) {
         imagen = new Image();
@@ -77,18 +85,28 @@ function Esfera(radio, resolucion, GL) {
         };
     };
 
-    this.dibujar = function (_position, _uv, MOVEMATRIX) {
+    this.dibujar = function (MOVEMATRIX) {
+        
         GL.uniformMatrix4fv(_Mmatrix, false, MOVEMATRIX);
+        
         if (imagen !== null && imagen.webglTexture) {
             GL.activeTexture(GL.TEXTURE0);
             GL.bindTexture(GL.TEXTURE_2D, imagen.webglTexture);
         }
+        
+        material.dibujar();
+
         GL.bindBuffer(GL.ARRAY_BUFFER, bufferVertices);
-        GL.vertexAttribPointer(_position, 3, GL.FLOAT, false, 4 * (3 + 2), 0);
-        GL.vertexAttribPointer(_uv, 2, GL.FLOAT, false, 4 * (3 + 2), 3 * 4);
+        GL.vertexAttribPointer(_position, 3, GL.FLOAT, false, 4 * (3 + 2 + 3), 0);
+        GL.vertexAttribPointer(_uv, 2, GL.FLOAT, false, 4 * (3 + 2 + 3), 4 * 3);
+        GL.vertexAttribPointer(_normal, 3, GL.FLOAT, false, 4 * (3 + 2 + 3), 4 * (3 + 2));
 
         GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, bufferCaras);
         GL.drawElements(GL.TRIANGLES, caras.length, GL.UNSIGNED_SHORT, 0);
+    };
+
+    this.setMaterial = function (material_) {
+        material = material_;
     };
 }
 ;

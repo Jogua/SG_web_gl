@@ -1,20 +1,22 @@
 function Planeta(radio, GL, distanciaAlSol, vRot, vTras, nombreTextura) {
+    
     var astro = new Astro(radio, GL, vRot, nombreTextura);
+    
+    var distanciaSol = distanciaAlSol + radio;
     var giroTraslacion = 0;
     var incremento = LIBS.degToRad(vTras);
+    
     if (distanciaAlSol == 0) {
         distanciaSol = 0;
         incremento = 0;
-    }else{
-        distanciaSol = distanciaAlSol + radio;
     }
     
-    var pickable = false;
+    var pickableTrasalacion = false;
     
     var satelites = [];
 
-    this.dibujar = function (_position, _uv, MOVEMATRIX) {
-        if (!pickable || !MOUSE.isPressed()) {
+    this.dibujar = function (MOVEMATRIX) {
+        if (!pickableTrasalacion || !MOUSE.isPressed()) {
             giroTraslacion += incremento;
         }
 
@@ -26,10 +28,10 @@ function Planeta(radio, GL, distanciaAlSol, vRot, vTras, nombreTextura) {
         var modelMatrix = LIBS.mult(matrixRot, MOVEMATRIX);
         modelMatrix = LIBS.mult(matrixTras, modelMatrix);
 
-        astro.dibujar(_position, _uv, modelMatrix);
+        astro.dibujar(modelMatrix);
 
         for (i = 0; i < satelites.length; i++) {
-            satelites[i].dibujar(_position, _uv, modelMatrix);
+            satelites[i].dibujar(modelMatrix);
         }
     };
 
@@ -43,6 +45,10 @@ function Planeta(radio, GL, distanciaAlSol, vRot, vTras, nombreTextura) {
     };
 
     this.setPickableTras = function (pick) {
-        pickable = pick;
+        pickableTrasalacion = pick;
     };
-}
+    
+    this.setMaterial = function (material){
+        astro.setMaterial(material);
+    };
+};
